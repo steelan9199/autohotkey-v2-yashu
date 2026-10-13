@@ -192,6 +192,11 @@ code := Chr(65)                  ; "A"
 num := Ord("A")                  ; 65
 ```
 
+> ⚠️ **字符串里的双引号只能用反引号转义（`` `" ``）**，v1 那种双写写法 `""` **不能用**。
+> 实测 `x := "say ""hi"" now"` 报 `Missing space or operator before this.`，
+> 且 `Specifically:` 指向的是字符串尾巴（`"hi"" now"`）—— 报错完全看不出是转义写法的问题。
+> 未闭合的字符串则报另一种错：`Missing """`（实测）。
+
 **正则**：
 
 ```ahk

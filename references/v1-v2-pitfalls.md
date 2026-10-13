@@ -225,7 +225,8 @@ SetTimer MyFunc, 1000        ; 仍然是函数
 | GUI | `Gui, Add, Button` | `Gui()` 对象（本 skill 不使用） |
 | 正则 | `RegExMatch` 存在但语义旧 | `RegExMatch` / `RegExReplace` 返回匹配对象 |
 | **自动执行段** | 止于第一个热键/`return`，其后的顶层语句**不执行** | **没有这个界线**：顶层语句按序全部执行，函数/热键/类定义被跳过 |
-| **`SoundBeep` 参数顺序** | `SoundBeep, Frequency, Duration` | **反过来了**：`SoundBeep(Duration, Frequency)` |
+| **`SoundBeep` 参数顺序** | `SoundBeep, Frequency, Duration` | **反过来了**：`SoundBeep(Duration, Frequency)`（源码 `md_func_v(SoundBeep, (Duration), (Frequency))` 已核） |
+| **字符串内双引号** | `"say ""hi"" now"`（双写转义） | **只能用反引号**：`` "say `"hi`" now" ``。用 `""` 实测报 `Missing space or operator before this.` |
 
 ### 关于"自动执行段"（实测）
 

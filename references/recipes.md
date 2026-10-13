@@ -596,7 +596,7 @@ Ext   := "*.txt"                     ; ← 文件类型
     n := 0
     Loop Files, Dir "\" Ext {
         SplitPath A_LoopFilePath, , , , &nameNoExt
-        target := Dir "\" stamp "_" n + 1 "_" nameNoExt "." SubStr(A_LoopFileExt, 2)
+        target := Dir "\" stamp "_" (n + 1) "_" nameNoExt "." A_LoopFileExt
         FileMove A_LoopFileFullPath, target
         n += 1
     }
@@ -945,7 +945,7 @@ Shot() {
     CaptureFullScreen(p)
 }
 
-^!F4::TrayTip "开始存档（每 " Interval / 1000 " 秒一张）", "延时摄影"
+^!F4::TrayTip "开始存档（每 " Interval // 1000 " 秒一张）", "延时摄影"
 ^!F3:: {
     SetTimer Shot, 0
     TrayTip "已停止存档", "延时摄影"

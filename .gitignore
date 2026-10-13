@@ -1,0 +1,12 @@
+# 交付脚本产生的截图/日志等运行期产物
+screenshots/
+*timelapse/
+*.log
+
+# Python
+__pycache__/
+*.pyc
+
+# 临时件
+~$*
+*.tmp
