@@ -1,6 +1,7 @@
-# AutoHotkey v2 配方库（28 个现成场景）
+# AutoHotkey v2 配方库（29 个现成场景）
 
-> 28 个配方，四类：**窗口/进程/调度**、**键鼠/热键/热字串**、**剪贴板/文本/文件**、**截图/找图找色/网络**。
+> 29 个配方，五类：**窗口/进程/调度**、**键鼠/热键/热字串**、**剪贴板/文本/文件**、
+> **截图/找图找色/网络**、**命令行驱动的批量操作**。
 >
 > 每个配方都是**能独立运行的完整脚本**，已逐块通过官方 v2.0.26 编译器校验。
 > 抄用方法：整块复制 → 改 **配置区**（`; ← 改这里` 标注的地方）→ 存成 UTF-8 的 `.ahk` → 跑一遍校验。
@@ -27,6 +28,7 @@
 | R12 | 一键输入常用文本 | R26 | 调用 HTTP 接口取 JSON |
 | R13 | 热字串：邮箱/日期/签名 | R27 | 下载文件 |
 | R14 | 滚轮与鼠标侧键 | R28 | 定时截图存档 |
+| R29 | 命令文件驱动批量操作 | — | — |
 
 ---
 
@@ -955,6 +957,60 @@ Shot() {
 
 > 长时间跑会占不少磁盘：全屏 PNG 一张约 400 KB，一张/30 秒 ≈ 每小时 48 MB。
 > 建议配合清理：`FileRecycle` 而不是 `FileDelete`，误删还能从回收站捞回来。
+
+---
+
+## R29 · 命令文件驱动批量桌面操作（免重写脚本）
+
+> 场景：要操作一个**只有 GUI、没有 API** 的程序，动作多、还要反复试错 ——
+> 点错一下就得改脚本重跑。这时别一步写一个 `.ahk`，改用
+> `scripts/delivered/cmd_driver.ahk`：**脚本固定，动作全写在纯文本命令文件里**，
+> 改动作只改文本，脚本不用动。
+
+**固定脚本**（技能内已交付，直接调用，不要复制一份出去）：
+
+```
+C:\Users\Administrator\.workbuddy\skills\autohotkey-v2-yashu\scripts\delivered\cmd_driver.ahk
+```
+
+**跑一条动作序列**：
+
+```bash
+AHK="C:/Program Files/AutoHotkey/v2/AutoHotkey.exe"
+D="C:/Users/Administrator/.workbuddy/skills/autohotkey-v2-yashu/scripts/delivered/cmd_driver.ahk"
+"$AHK" "$D" "D:/temp/steps.txt" "ahk_exe Doubao.exe" "D:/temp/steps.log"
+```
+
+命令文件（存 UTF-8，一行一条，`;` 开头是注释）：
+
+```
+activate                      ; 不带参数 → 用命令行第 2 个参数指定的窗口
+sleep|800                     ; 等窗口渲染完再截图
+shot|D:\temp\s01.png          ; 全屏截图，等到文件真出现才返回
+click|1795|983                ; 屏幕绝对坐标点左键
+typefile|D:\temp\prompt.txt   ; 长文本从文件发，绕开 | 与换行问题
+key|{Enter}
+probe                         ; 把当前前台窗口标题、鼠标坐标写进日志
+```
+
+完整命令表见脚本头部注释（`activate / move / click / dblclick / wheel / type /
+typefile / key / sleep / shot / probe / log`）。
+
+**三条调用侧硬经验（都是实测踩出来的）**：
+
+| # | 经验 | 不遵守的后果 |
+|---|---|---|
+| 1 | **`shot` 之前必须先 `activate`** | 目标窗口不在前台时，全屏截图拍到的是遮挡它的窗口 ⇒ 从图里量出的"按钮坐标"全错，**且不报任何错** |
+| 2 | **pwsh/bash 里 `& 解释器.exe 脚本.ahk` 不等待 GUI 程序** | 命令立刻返回、退出码为空，看着像"没跑"，其实还在跑。**判完成看产物文件**：先删旧产物，再轮询等它出现（本机实测截屏约 4~5 秒落盘） |
+| 3 | **命令文件必须存 UTF-8** | 存成 ANSI/GBK 时，中文参数进脚本变乱码，命令静默失效 |
+
+**定位按钮：优先 OCR，别硬估坐标**。先 `activate` + `shot` 截全屏，把图交给本地 OCR
+（本机 `rapidocr-local-ocr` 技能），直接拿到「文字 + 屏幕绝对坐标」，点文字中心即可 ——
+按钮改名、多语言、多行折行都不会错位。比按底色扫像素（R24）稳，颜色会被主题和高亮态改变。
+
+**要加一条新命令**：在 `ExecCmd()` 里加一个 `case`，再写个 `DoXxx(Parts)` 函数；
+`Parts[1]` 是命令名，`Parts[2..]` 是参数。文本类参数用 `JoinParts(Parts, 2)` 拼回，
+这样参数里含 `|` 也不会被截断。
 
 ---
 

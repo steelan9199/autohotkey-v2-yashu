@@ -2,7 +2,7 @@
 name: autohotkey-v2-yashu
 description: 用 AutoHotkey v2（仅 v2.0.x，排除 v1 与 v2.1）为 Windows 11 编写桌面自动化脚本——键盘鼠标模拟、全局热键与热字串、窗口/进程管理、剪贴板与文本处理、批量文件操作、定时任务、找图找色与截图、调用外部程序。当用户提到 AutoHotkey、ahk、ahk2、写个脚本自动操作电脑、全局快捷键、热键、热字串、模拟按键、自动点击、自动填表、窗口切换、激活窗口、剪贴板处理、批量重命名、监听文件夹、定时执行、开机自启脚本、找图找色、自动登录、游戏或办公自动化时使用。不含 GUI 界面开发，不写 v1 语法，不使用 v2.1 新特性。
 disable-model-invocation: false
-version: 1.0.0
+version: 1.1.0
 ---
 
 # AutoHotkey v2 自动化脚本（Windows 11）
@@ -226,6 +226,7 @@ SelfTest() {
 | 脚本 | 用途 | 用法 | 交付日期 |
 |---|---|---|---|
 | `shot_region.ahk` | 截取屏幕固定矩形区域（默认左上 (15,163) → 右下 (160,193)，145×30 像素），存为 PNG | 双击 = 截图一张；`Ctrl+Alt+R` 再截；`Ctrl+Alt+X` 退出。图片存脚本同目录 `screenshots\`，文件名 `region_年月日_时分秒.png`。改区域：改配置区的 `BOX := {x1: 15, y1: 163, x2: 160, y2: 193}` 那一行 | 2026-10-13 |
+| `cmd_driver.ahk` | **命令文件驱动的桌面操作执行器**：把「每步新写一个脚本」变成「写一个纯文本命令文件」，支持 `activate / move / click / dblclick / wheel / type / typefile / key / sleep / shot / probe / log`，全程记日志 | `AutoHotkey.exe cmd_driver.ahk <命令文件> [目标窗口] [日志文件]`。命令文件存 UTF-8、一行一条、字段用 `\|` 分隔；`shot` 等产物文件落盘后再返回。加 `test` 参数 = 只验解析分发、不动键鼠。用法与三条调用侧坑见 `references/recipes.md §R29 命令文件驱动批量桌面操作` | 2026-10-16 |
 
 **改动已有成品时**：留在原地改，改完重跑校验 + 试跑，再回来更新台账该行的"用法"（比如热键变了）。
 
